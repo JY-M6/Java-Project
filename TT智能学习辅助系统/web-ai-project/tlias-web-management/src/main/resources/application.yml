@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: tlias-web-management
+  datasource:
+    url: jdbc:mysql://localhost:3306/tlias # windows环境下的数据库连接URL
+    #url : jdbc:mysql://192.168.100.128:3306/tlias # linux环境下的数据库连接URL
+    #url: jdbc:mysql://mysql:3306/tlias #docker环境下的数据库连接URL
+    username: root
+    password: Gsl3014489365 # windows环境下的数据库密码
+    #password: 1234 # linux环境下的数据库密码
+    #password: 123 # docker环境下的数据库密码
+    driver-class-name: com.mysql.jdbc.Driver
+  servlet:
+    multipart:
+      #最大单个文件大小
+      max-file-size: 10MB
+      #最大请求大小（包含文件和表单数据）
+      max-request-size: 100MB
+
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #开启驼峰命名映射开关
+    map-underscore-to-camel-case: true
+
+#配置事务管理日志级别
+logging:
+  level:
+    org.springframework.jdbc.support.JdbcTransactionManager: debug
+
+#配置阿里云OSS
+aliyun:
+  oss:
+    endpoint: oss-cn-beijing.aliyuncs.com
+    bucketName: java-web-ai-mu
+    region: cn-beijing

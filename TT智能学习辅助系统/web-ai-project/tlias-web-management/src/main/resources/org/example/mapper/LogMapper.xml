@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.mapper.LogMapper">
+
+    <!-- 简单的分页查询所有操作日志 -->
+    <select id="page" resultType="org.example.pojo.OperateLog">
+        SELECT
+        ol.id,
+        ol.operate_emp_id,
+        ol.operate_time,
+        ol.class_name,
+        ol.method_name,
+        ol.method_params,
+        ol.return_value,
+        ol.cost_time,
+        e.name as operateEmpName
+        FROM operate_log ol
+        LEFT JOIN emp e ON ol.operate_emp_id = e.id
+        ORDER BY ol.operate_time DESC
+    </select>
+
+
+</mapper>
