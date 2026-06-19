@@ -17,3 +17,7 @@ export const deleteEmpApi = (ids) => request.delete(`/emps?ids=${ids}`)
 
 //查询所有员工
 export const queryAllApi = () => request.get(`/emps/list`)
+
+//修改密码
+export const updatePasswordApi = (data) => request.put('/emps/password', data)
+

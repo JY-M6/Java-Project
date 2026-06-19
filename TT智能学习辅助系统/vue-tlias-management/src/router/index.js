@@ -33,4 +33,23 @@ const router = createRouter({
   routes,
 });
 
+// 全局路由导航守卫
+router.beforeEach((to, from, next) => {
+  // 如果是去登录页，直接放行
+  if (to.path === '/login') {
+    next();
+    return;
+  }
+  
+  // 检查本地存储中是否存在用户信息
+  const loginUser = localStorage.getItem('loginUser');
+  if (!loginUser) {
+    // 未登录，重定向到登录页
+    next('/login');
+  } else {
+    // 已登录，允许访问
+    next();
+  }
+});
+
 export default router;

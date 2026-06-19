@@ -44,10 +44,13 @@ public class TokenFilter implements Filter {
 
         //5.如果token存在，校验令牌，如果校验失败->返回401状态码，如果校验成功，则放行
         try{
-            JwtUtils.parseToken(token);
+            java.util.Map<String, Object> claims = JwtUtils.parseToken(token);
             //获取用户id
-            Integer empId = (Integer) JwtUtils.parseToken(token).get("id");
-            log.info("当前用户id: {}", empId);
+            Integer empId = (Integer) claims.get("id");
+            String username = (String) claims.get("username");
+            ell.setId(empId);
+            ell.setUsername(username);
+            log.info("当前用户id: {}, 用户名: {}", empId, username);
             //将用户id存储到请求域中
             CurrentHolder.setCurrent(ell);
         }catch (Exception e){

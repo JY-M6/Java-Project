@@ -149,6 +149,9 @@ const rules = ref({
   ],
   isCollege: [
     { required: true, message: '是否院校学员为必填项', trigger: 'change' }
+  ],
+  clazzId: [
+    { required: true, message: '班级为必选项', trigger: 'change' }
   ]
 })
 
@@ -398,7 +401,7 @@ const openViolation = (id) => {
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="所属班级" :label-width="labelWidth">
+          <el-form-item label="所属班级" :label-width="labelWidth" prop="clazzId">
             <el-select v-model="stu.clazzId" placeholder="请选择" style="width: 100%;">
               <el-option v-for="clazz in clazzs" :label="clazz.name" :value="clazz.id" />
             </el-select>

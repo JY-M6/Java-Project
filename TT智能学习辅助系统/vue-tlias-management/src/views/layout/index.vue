@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useRouter } from 'vue-router'
+import { updatePasswordApi } from '@/api/emp'
 
 let router = useRouter()
 
@@ -27,6 +28,71 @@ const logout = () => {
     router.push('/login')//跳转到登录页面
   })
 }
+
+// 修改密码弹窗相关
+const passwordDialogVisible = ref(false)
+const passwordFormRef = ref(null)
+const passwordForm = ref({
+  oldPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+})
+
+const passwordRules = {
+  oldPassword: [
+    { required: true, message: '请输入原始密码', trigger: 'blur' }
+  ],
+  newPassword: [
+    { required: true, message: '请输入新密码', trigger: 'blur' },
+    { min: 6, max: 20, message: '新密码长度应为 6 到 20 位', trigger: 'blur' }
+  ],
+  confirmPassword: [
+    { required: true, message: '请再次输入新密码', trigger: 'blur' },
+    {
+      validator: (rule, value, callback) => {
+        if (value !== passwordForm.value.newPassword) {
+          callback(new Error('两次输入的新密码不一致'))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'blur'
+    }
+  ]
+}
+
+const openPasswordDialog = () => {
+  passwordDialogVisible.value = true
+  passwordForm.value = {
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  }
+  if (passwordFormRef.value) {
+    passwordFormRef.value.resetFields()
+  }
+}
+
+const submitPassword = () => {
+  if (!passwordFormRef.value) return
+  passwordFormRef.value.validate(async (valid) => {
+    if (valid) {
+      const result = await updatePasswordApi({
+        oldPassword: passwordForm.value.oldPassword,
+        newPassword: passwordForm.value.newPassword
+      })
+      if (result.code === 1) {
+        ElMessage.success('密码修改成功，请重新登录')
+        passwordDialogVisible.value = false
+        // 清理本地存储并跳往登录页
+        localStorage.removeItem('loginUser')
+        router.push('/login')
+      } else {
+        ElMessage.error(result.msg || '原始密码错误或修改失败')
+      }
+    }
+  })
+}
 </script>
 
 <template>
@@ -36,7 +102,7 @@ const logout = () => {
       <el-header class="header">
         <span class="title">Tlias智能学习辅助系统</span>
         <span class="right_tool">
-          <a href="">
+          <a href="javascript:void(0)" @click="openPasswordDialog">
             <el-icon><EditPen /></el-icon> 修改密码 &nbsp;&nbsp;&nbsp; |  &nbsp;&nbsp;&nbsp;
           </a>
           <a href="javascript:void(0)" @click="logout">
@@ -105,6 +171,27 @@ const logout = () => {
         </el-main>
       </el-container>
     </el-container>
+
+    <!-- 修改密码对话框 -->
+    <el-dialog v-model="passwordDialogVisible" title="修改密码" width="450px" append-to-body>
+      <el-form :model="passwordForm" :rules="passwordRules" ref="passwordFormRef" label-width="100px" style="padding: 10px 20px 0 0;">
+        <el-form-item label="原始密码" prop="oldPassword">
+          <el-input v-model="passwordForm.oldPassword" type="password" show-password placeholder="请输入原始密码" />
+        </el-form-item>
+        <el-form-item label="新密码" prop="newPassword">
+          <el-input v-model="passwordForm.newPassword" type="password" show-password placeholder="请输入新密码" />
+        </el-form-item>
+        <el-form-item label="确认新密码" prop="confirmPassword">
+          <el-input v-model="passwordForm.confirmPassword" type="password" show-password placeholder="请再次输入新密码" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="passwordDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitPassword">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 

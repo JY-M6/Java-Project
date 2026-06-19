@@ -27,4 +27,6 @@ public interface EmpService {
     void update(Emp emp);
 
     public LoginInfo login(Emp emp);
+
+    boolean updatePassword(Integer empId, String oldPassword, String newPassword);
 }

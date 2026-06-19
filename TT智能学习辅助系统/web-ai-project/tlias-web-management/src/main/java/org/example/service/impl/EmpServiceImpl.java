@@ -135,4 +135,18 @@ public class EmpServiceImpl implements EmpService {
         //3.如果员工不存在，返回null
         return null;
     }
+
+    @Override
+    public boolean updatePassword(Integer empId, String oldPassword, String newPassword) {
+        Emp emp = empMapper.selectById(empId);
+        if (emp != null && emp.getPassword().equals(oldPassword)) {
+            Emp updateEmp = new Emp();
+            updateEmp.setId(empId);
+            updateEmp.setPassword(newPassword);
+            updateEmp.setUpdateTime(LocalDateTime.now());
+            empMapper.updateById(updateEmp);
+            return true;
+        }
+        return false;
+    }
 }

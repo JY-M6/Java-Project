@@ -81,4 +81,21 @@ public class EmpController {
         empService.update(emp);
         return Result.success();
     }
+
+    //修改密码
+    @PutMapping("/password")
+    @Log
+    public Result updatePassword(@RequestHeader("token") String token, @RequestBody java.util.Map<String, String> params) {
+        String oldPassword = params.get("oldPassword");
+        String newPassword = params.get("newPassword");
+        log.info("修改密码，oldPassword: {}, newPassword: {}", oldPassword, newPassword);
+        
+        Integer empId = (Integer) org.example.utils.JwtUtils.parseToken(token).get("id");
+        boolean success = empService.updatePassword(empId, oldPassword, newPassword);
+        if (success) {
+            return Result.success();
+        } else {
+            return Result.error("原始密码错误");
+        }
+    }
 }
